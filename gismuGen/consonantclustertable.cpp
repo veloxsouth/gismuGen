@@ -1,15 +1,11 @@
 #include "consonantclustertable.h"
 
-ConsonantClusterTable::ConsonantClusterTable()
+ConsonantClusterTable::ConsonantClusterTable(ConsonantTable& conTable)
 {
     //ctor
     //enumerate all valid clusters into m_clusters
     int i, j;
-    m_weededClusterCount = 0;
-    m_weededClusterDoubleCount = 0;
-    m_weededClusterExceptionCount = 0;
-    m_weededClusterVUCount = 0;
-    vector<char> conList = m_conTable.getList();
+    vector<char> conList = conTable.getList();
     int size = (signed) conList.size();
     char a, b;
     string tempString;
@@ -27,19 +23,15 @@ ConsonantClusterTable::ConsonantClusterTable()
             //no double consonants
             if (a == b)
             {
-                m_weededClusterCount++;
-                m_weededClusterDoubleCount++;
                 continue;
             }
 
             //can not be voiced and unvoiced together
-            isFirstCharVoiced = m_conTable.isVoiced(a);
-            isSecondCharVoiced = m_conTable.isVoiced(b);
+            isFirstCharVoiced = conTable.isVoiced(a);
+            isSecondCharVoiced = conTable.isVoiced(b);
             if ((isFirstCharVoiced == voiced && isSecondCharVoiced == unvoiced) ||
                 (isFirstCharVoiced == unvoiced && isSecondCharVoiced == voiced))
             {
-                m_weededClusterVUCount++;
-                m_weededClusterCount++;
                 continue;
             }
 
@@ -58,30 +50,20 @@ ConsonantClusterTable::ConsonantClusterTable()
                 !tempString.compare("xk") ||
                 !tempString.compare("mz"))
             {
-                m_weededClusterExceptionCount++;
-                m_weededClusterCount++;
                 continue;
             }
 
             m_clusters.push_back(tempString);
         }
     }
-    m_intDist = new uniform_int_distribution<int>(0, m_clusters.size() - 1);
 }
 
 ConsonantClusterTable::~ConsonantClusterTable()
 {
     //dtor
-    delete m_intDist;
 }
 
-
-string ConsonantClusterTable::getRandom()
-{
-    return m_clusters[(*m_intDist)(m_gen)];
-}
-
-vector<string> ConsonantClusterTable::getList()
+const vector<string>& ConsonantClusterTable::getList()
 {
     return m_clusters;
 }

@@ -12,14 +12,12 @@ using namespace std;
 class GismuEnumerator
 {
     public:
-        GismuEnumerator();
+        GismuEnumerator(InitialConsonantClusterTable& initConTable, ConsonantClusterTable& conClusterTable, ConsonantTable& conTable);
         virtual ~GismuEnumerator();
-        Gismu* getRandomGismu();
         string toString();
-        vector<Gismu*> getList();
+		vector<Gismu*>& getList() { return m_allGismu;};
     protected:
         vector<Gismu*> m_allGismu;
-        mt19937 m_gen;
     private:
 };
 

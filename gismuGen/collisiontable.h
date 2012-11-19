@@ -12,7 +12,7 @@ class CollisionTable
         CollisionTable();
         virtual ~CollisionTable();
         bool areLettersColliding(char proposed, char existing);
-        vector<char> getCollisions(char proposed);
+        const vector<char> getCollisions(char proposed);
     protected:
         multimap<char, char> m_table;
     private:

@@ -1,14 +1,12 @@
-#include "initialconsonantclustertable.h"
-#include "consonantclustertable.h"
 #include "gismu.h"
 #include <iostream>
 
-Gismu::Gismu(string name, CollisionTable& colTable)
+Gismu::Gismu(string name, CollisionTable& colTable, InitialConsonantClusterTable& initConClusterTable, ConsonantClusterTable& conClusterTable)
     :m_colTable(colTable), m_name(name), m_isRetired(false)
 {
     //ctor
     //cout << "Generating Gismu: " << m_name << endl;
-    calcCollisions();
+    calcCollisions(initConClusterTable, conClusterTable);
 }
 
 Gismu::~Gismu()
@@ -34,7 +32,7 @@ void Gismu::addToBlacklist()
     m_isRetired = true;
 }
 
-void Gismu::calcCollisions()
+void Gismu::calcCollisions(InitialConsonantClusterTable& initConClusterTable, ConsonantClusterTable& conClusterTable)
 {
     int i, j;
     vector<char> lerfuCollisions;
@@ -50,7 +48,7 @@ void Gismu::calcCollisions()
         {
             tempName = m_name;
             tempName.replace(i, 1, 1, lerfuCollisions[j]);
-            if (Gismu::isValid(tempName))
+            if (Gismu::isValid(tempName, initConClusterTable, conClusterTable))
             {
                 m_collisions.push_back(tempName);
                 //cout << "collision calculated: " << tempName << endl;
@@ -68,7 +66,7 @@ void Gismu::calcCollisions()
             {
                 tempName = m_name;
                 tempName.replace(4, 1, 1, vowels[i]);
-                if (Gismu::isValid(tempName))
+                if (Gismu::isValid(tempName, initConClusterTable, conClusterTable))
                 {
                     m_collisions.push_back(tempName);
                     //cout << "collision calculated: " << tempName << endl;
@@ -78,7 +76,7 @@ void Gismu::calcCollisions()
     }
 }
 
-bool Gismu::isValid(string var)
+bool Gismu::isValid(string var, InitialConsonantClusterTable& initConClusterTable, ConsonantClusterTable& conClusterTable)
 {
     //must be of the form ccvc or cvc/cv
     //where cc is a permissible initial consonant pair
@@ -89,22 +87,19 @@ bool Gismu::isValid(string var)
     if (var.size() != 5)
         return false;
 
-    InitialConsonantClusterTable initConClusterTable;
-    ConsonantClusterTable conClusterTable;
-    ConsonantTable conTable;
     char vowels[5] = {'a', 'e', 'i', 'o', 'u'};
     //ccvcv
     char vowel;
     bool consonantsPass = false;
     bool firstVowelPass = false;
     bool secondVowelPass = false;
-    if (initConClusterTable.isValid(var.substr(0, 2)) && conTable.isValid(var.at(3)))
+    if (initConClusterTable.isValid(var.substr(0, 2)))
     {
         consonantsPass = true;
         vowel = var.at(2);
     }
 
-    if (conTable.isValid(var.at(0)) && conClusterTable.isValid(var.substr(2, 2)))
+    if (conClusterTable.isValid(var.substr(2, 2)))
     {
         consonantsPass = true;
         vowel = var.at(1);

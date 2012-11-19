@@ -74,22 +74,14 @@ InitialConsonantClusterTable::InitialConsonantClusterTable()
     m_initConClusters.push_back(string("zg"));
     m_initConClusters.push_back(string("zm"));
     m_initConClusters.push_back(string("zv"));
-
-    m_intDist = new uniform_int_distribution<int>(0, m_initConClusters.size() - 1);
 }
 
 InitialConsonantClusterTable::~InitialConsonantClusterTable()
 {
     //dtor
-    delete m_intDist;
 }
 
-string InitialConsonantClusterTable::getRandom()
-{
-    return m_initConClusters[(*m_intDist)(m_gen)];
-}
-
-vector<string> InitialConsonantClusterTable::getList()
+const vector<string>& InitialConsonantClusterTable::getList()
 {
     return m_initConClusters;
 }

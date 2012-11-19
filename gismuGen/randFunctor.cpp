@@ -1,8 +1,8 @@
 #include "randFunctor.h"
 #include <ctime>
 
-randFunctor::randFunctor(void)
-	:m_gen(time(NULL))
+randFunctor::randFunctor(mt19937& gen)
+	:m_gen(gen)
 {
 }
 

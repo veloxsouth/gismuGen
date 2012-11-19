@@ -12,33 +12,45 @@
 using namespace std;
 
 int test ();
-unsigned int sim(GismuEnumerator& gismuEnum);
+unsigned int sim(GismuEnumerator& gismuEnum, randFunctor& myRand);
 
 int main()
 {
+	mt19937 gen;
+	randFunctor myRand(gen);
 	time_t enumerationTime = time(NULL);
 	cout << "Enumerating All Possible Gismu. This may take a while." << endl;
-    GismuEnumerator gismuEnum;
+	ConsonantTable conTable;
+	ConsonantClusterTable conClusterTable(conTable);
+	InitialConsonantClusterTable initConClusterTable;
+    GismuEnumerator gismuEnum(initConClusterTable, conClusterTable, conTable);
 	enumerationTime = time(NULL) - enumerationTime;
 	cout << enumerationTime << " seconds elapsed to generate enumeration." << endl;
     int i;
     int accum = 0;
     int temp;
+	time_t iterStart = time(NULL);
+	time_t iterCurrent;
     for (i = 0; i < 10000; i++)
     {
         cout << "Iteration: " << i + 1 << endl;
-        temp = sim(gismuEnum);
+        temp = sim(gismuEnum, myRand);
         cout << "Dictionary Size: " << temp << endl;
         accum += temp;
         cout << "Running Avg: " << accum / (i + 1) << endl;
+		iterCurrent = time(NULL);
+		cout << "Avg iterations per second: ";
+		if (iterCurrent != iterStart)
+			cout << (double) (i + 1) / (double) (iterCurrent - iterStart) << endl;
+		else
+			cout << "undefined";
     }
 
     return 0;
 }
 
-int test ()
+int test (CollisionTable& colTable, InitialConsonantClusterTable initConClusterTable, ConsonantClusterTable conClusterTable)
 {
-    CollisionTable colTable;
     cout << "Letter collisions" << endl;
     cout << "not colliding :" << endl;
     cout << colTable.areLettersColliding('b', 'c') << endl;
@@ -48,11 +60,11 @@ int test ()
     cout << colTable.areLettersColliding('b', 'v') << endl;
     cout << colTable.areLettersColliding('g', 'x') << endl;
 
-    Gismu gismu("gismu", colTable);
-    Gismu gicmu("gicmu", colTable);
-    Gismu zukte("zukte", colTable);
-    Gismu xicmu("xicmu", colTable);
-    Gismu broda("broda", colTable);
+    Gismu gismu("gismu", colTable, initConClusterTable, conClusterTable);
+    Gismu gicmu("gicmu", colTable, initConClusterTable, conClusterTable);
+    Gismu zukte("zukte", colTable, initConClusterTable, conClusterTable);
+    Gismu xicmu("xicmu", colTable, initConClusterTable, conClusterTable);
+    Gismu broda("broda", colTable, initConClusterTable, conClusterTable);
 
     cout << "gismu collisions" << endl;
     cout << "not colliding :" << endl;
@@ -72,14 +84,9 @@ int test ()
     }
     cout << endl;
 
-    ConsonantClusterTable conClusterTable;
     cout << "Consonant Clusters:" << endl;
     vector<string> tempVec = conClusterTable.getList();
     cout << "count: " << tempVec.size() << endl;
-    cout << "weeded cluster count: " << conClusterTable.getWeededClusterCount() << endl;
-    cout << "weeded cluster voiced unvoiced count: " << conClusterTable.getWeededClusterVUCount() << endl;
-    cout << "weeded cluster double count: " << conClusterTable.getWeededClusterDoubleCount() << endl;
-    cout << "weeded cluster Exceptional count: " << conClusterTable.getWeededClusterExceptionCount() << endl;
 
     for (i = 0; i < (signed) tempVec.size(); i++)
     {
@@ -125,9 +132,8 @@ int test ()
     return 0;
 }
 
-unsigned int sim(GismuEnumerator& gismuEnum)
+unsigned int sim(GismuEnumerator& gismuEnum, randFunctor& myRand)
 {
-	randFunctor myRand;
     vector<Gismu*> gismuToAdd = gismuEnum.getList();
     map<string, Gismu*> gismuAccess;
     map<string, Gismu*> gismuAdded;

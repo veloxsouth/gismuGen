@@ -1,14 +1,11 @@
 #include "gismuenumerator.h"
 #include "collisiontable.h"
 
-GismuEnumerator::GismuEnumerator()
+GismuEnumerator::GismuEnumerator(InitialConsonantClusterTable& initConTable, ConsonantClusterTable& conClusterTable, ConsonantTable& conTable)
 {
     //ctor
     CollisionTable colTable;
     char vowels[5] = {'a', 'e', 'i', 'o', 'u'};
-    ConsonantClusterTable conClusterTable;
-    ConsonantTable conTable;
-    InitialConsonantClusterTable initConTable;
 
     vector<string> clusterList = conClusterTable.getList();
     vector<char> conList = conTable.getList();
@@ -33,7 +30,7 @@ GismuEnumerator::GismuEnumerator()
                     tempString += vowels[i];
                     tempString += *conIter;
                     tempString += vowels[j];
-                    m_allGismu.push_back(new Gismu(tempString, colTable));
+                    m_allGismu.push_back(new Gismu(tempString, colTable, initConTable, conClusterTable));
                 }
             }
         }
@@ -53,7 +50,7 @@ GismuEnumerator::GismuEnumerator()
                     tempString += vowels[i];
                     tempString += *clusterIter;
                     tempString += vowels[j];
-                    m_allGismu.push_back(new Gismu(tempString, colTable));
+                    m_allGismu.push_back(new Gismu(tempString, colTable, initConTable, conClusterTable));
                 }
             }
         }
@@ -80,15 +77,4 @@ string GismuEnumerator::toString()
         retString += '\n';
     }
     return retString;
-}
-
-Gismu* GismuEnumerator::getRandomGismu()
-{
-    uniform_int_distribution<int> intDist(0, m_allGismu.size() - 1);
-    return m_allGismu[intDist(m_gen)];
-}
-
-vector<Gismu*> GismuEnumerator::getList()
-{
-    return m_allGismu;
 }

@@ -20,21 +20,14 @@ ConsonantTable::ConsonantTable()
     m_consonants.push_back('v');
     m_consonants.push_back('x');
     m_consonants.push_back('z');
-    m_intDist = new uniform_int_distribution<int>(0, m_consonants.size() - 1);
 }
 
 ConsonantTable::~ConsonantTable()
 {
     //dtor
-    delete m_intDist;
 }
 
-char ConsonantTable::getRandom()
-{
-    return m_consonants[(*m_intDist)(m_gen)];
-}
-
-vector<char> ConsonantTable::getList()
+const vector<char>& ConsonantTable::getList()
 {
     return m_consonants;
 }
@@ -64,17 +57,4 @@ ConsonantClusterVoicing ConsonantTable::isVoiced(char c)
     {
         return exempt;
     }
-}
-
-bool ConsonantTable::isValid(char var)
-{
-    vector<char>::iterator iter;
-    for (iter = m_consonants.begin(); iter != m_consonants.end(); iter++)
-    {
-        if (var == *iter)
-        {
-            return true;
-        }
-    }
-    return false;
 }

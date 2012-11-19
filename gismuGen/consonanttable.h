@@ -17,14 +17,10 @@ class ConsonantTable
     public:
         ConsonantTable();
         virtual ~ConsonantTable();
-        char getRandom();
-        vector<char> getList();
-        bool isValid(char var);
+        const vector<char>& getList();
         static ConsonantClusterVoicing isVoiced(char c);
     protected:
         vector<char> m_consonants;
-        mt19937 m_gen;
-        uniform_int_distribution<int>* m_intDist;
     private:
 };
 

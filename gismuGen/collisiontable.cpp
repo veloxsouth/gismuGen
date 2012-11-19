@@ -67,7 +67,7 @@ bool CollisionTable::areLettersColliding(char proposed, char existing)
     return false;
 }
 
-vector<char> CollisionTable::getCollisions(char proposed)
+const vector<char> CollisionTable::getCollisions(char proposed)
 {
     vector<char> retVec;
     pair<multimap<char, char>::iterator, multimap<char, char>::iterator> lookup = m_table.equal_range(proposed);
